@@ -69,7 +69,7 @@ export class CartComponent implements OnInit {
       this.showMsg('Please fill in all required fields');
     } else if (!this.isValidCreditCardNumber(creditCard)) {
       this.showMsg('Please enter a valid 16-digit credit card number');
-    } else if (this.totalAmount === 0) {
+    } else if (this.totalAmount === 0 || this.isQuantityMissing()) {
       this.showMsg('Please select product to pay');
     } else {
       this.cartService.clearCart();
@@ -105,5 +105,14 @@ export class CartComponent implements OnInit {
   isValidCreditCardNumber(creditCard: string) {
     var regex = /^\d{16}$/;
     return regex.test(creditCard);
+  }
+
+  isQuantityMissing(): boolean {
+    for (const product of this.cartService.getCartItems()) {
+      if (!product.quantity) {
+        return true;
+      }
+    }
+    return false;
   }
 }
