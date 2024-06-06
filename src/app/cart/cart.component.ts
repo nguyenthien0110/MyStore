@@ -65,12 +65,12 @@ export class CartComponent implements OnInit {
     var address = addressInput.value;
     var creditCard = creditCardInput.value;
 
-    if (!fullName || !address || !creditCard) {
+    if (this.totalAmount === 0 || this.isQuantityMissing()) {
+      this.showMsg('Please select product to pay');
+    } else if (!fullName || !address || !creditCard) {
       this.showMsg('Please fill in all required fields');
     } else if (!this.isValidCreditCardNumber(creditCard)) {
       this.showMsg('Please enter a valid 16-digit credit card number');
-    } else if (this.totalAmount === 0 || this.isQuantityMissing()) {
-      this.showMsg('Please select product to pay');
     } else {
       this.cartService.clearCart();
       this.openPaymentSuccessDialog(this.fullName);
