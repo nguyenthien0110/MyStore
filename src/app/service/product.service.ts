@@ -1,68 +1,55 @@
 import { EventEmitter, Injectable } from '@angular/core';
+import { Product } from '../model/product.model';
+import { Observable, catchError, map, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-  private products = [
-    {
-      id: 1,
-      name: 'iPhone 11 64GB',
-      price: 337.53,
-      imageUrl:
-        'https://cdn.tgdd.vn/Products/Images/42/153856/iphone-11-trang-600x600.jpg',
-      description: 'iPhone 11 64GB description',
-    },
-    {
-      id: 2,
-      name: 'iPhone 12 128GB',
-      price: 455.41,
-      imageUrl:
-        'https://cdn.tgdd.vn/Products/Images/42/213031/iphone-12-trang-13-600x600.jpg',
-      description: 'iPhone 12 128GB description',
-    },
-    {
-      id: 3,
-      name: 'iPhone 13 128GB',
-      price: 537.92,
-      imageUrl:
-        'https://cdn.tgdd.vn/Products/Images/42/223602/iphone-13-xanh-la-thumb-new-600x600.jpg',
-      description: 'iPhone 13 128GB description',
-    },
-    {
-      id: 4,
-      name: 'iPhone 14 Pro Max 128GB',
-      price: 1044.8,
-      imageUrl:
-        'https://cdn.tgdd.vn/Products/Images/42/251192/iphone-14-pro-max-tim-thumb-600x600.jpg',
-      description: 'iPhone 14 Pro Max 128GB description',
-    },
-    {
-      id: 5,
-      name: 'iPhone 15 Plus 512GB',
-      price: 1256.98,
-      imageUrl:
-        'https://cdn.tgdd.vn/Products/Images/42/303825/iphone-15-plus-hong-512gb-thumb-600x600.jpg',
-      description: 'iPhone 15 Plus 512GB description',
-    },
-    {
-      id: 6,
-      name: 'iPhone 15 Pro Max 256GB',
-      price: 1162.68,
-      imageUrl:
-        'https://cdn.tgdd.vn/Products/Images/42/305658/iphone-15-pro-max-blue-thumbnew-600x600.jpg',
-      description: 'iPhone 15 Pro Max 256GB description',
-    },
-  ];
+  private products: Product[] = [];
 
-  constructor() {}
-  addToCartEvent = new EventEmitter<any>();
-
-  getAllProducts(): any[] {
-    return this.products;
+  constructor(private http: HttpClient, private _snackBar: MatSnackBar) {
+    this.http
+      .get<any>('https://product-udaicity.onrender.com/api/product')
+      .subscribe(
+        (data: any) => {
+          if (data && data.data) {
+            data.data.forEach((item: any) => {
+              this.products.push({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                imageUrl: item.imageUrl,
+                description: item.description,
+              });
+            });
+          } else {
+            this._snackBar.open('Data is empty or malformed', 'Close', {
+              duration: 3000,
+              verticalPosition: 'top',
+              horizontalPosition: 'right',
+            });
+          }
+        },
+        (error) => {
+          this._snackBar.open('Internal Server Error', 'Close', {
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'right',
+          });
+        }
+      );
   }
 
-  getProductById(id: number): any {
+  addToCartEvent = new EventEmitter<any>();
+
+  getAllProducts(): Product[] {
+    return this.products as Product[];
+  }
+
+  getProductById(id: number): Product | undefined {
     return this.products.find((product) => product.id === id);
   }
 }

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ProductService } from '../service/product.service';
 import { CartService } from '../service/cart.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Product } from '../model/product.model';
 
 @Component({
   selector: 'app-product-list',
@@ -11,9 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './product-list.component.css',
 })
 export class ProductListComponent implements OnInit {
-  products: any[] = [];
-  product: any;
-  cartItems: any[] = [];
+  products: Product[] = [];
   @Output() addToCartEvent = new EventEmitter<any>();
   selectedQuantity: number = 1;
 
@@ -31,7 +30,7 @@ export class ProductListComponent implements OnInit {
     this.router.navigate(['/product', productId]);
   }
 
-  addToCart(product: any, selectedQuantity: number): void {
+  addToCart(product: Product, selectedQuantity: number): void {
     this.cartService.addToCart(product, selectedQuantity);
     this._snackBar.open('Added data successfully', 'Close', {
       duration: 3000,

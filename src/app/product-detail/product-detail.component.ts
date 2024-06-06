@@ -12,13 +12,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class ProductDetailComponent implements OnInit {
   product: any;
   selectedQuantity: number = 1;
+  quantities: number[] = Array.from({ length: 10 }, (_, i) => i + 1);
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private productService: ProductService,
     private cartService: CartService,
-    private _snackBar: MatSnackBar,
+    private _snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -39,5 +40,9 @@ export class ProductDetailComponent implements OnInit {
       verticalPosition: 'top',
       horizontalPosition: 'right',
     });
+  }
+
+  selectedQuantityChange(quantity: number): void {
+    this.selectedQuantity = quantity;
   }
 }
